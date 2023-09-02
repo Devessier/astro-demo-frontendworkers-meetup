@@ -3,7 +3,7 @@ const favorites = [
     id: 1,
     name: "Black Basic Tee",
     price: "$32",
-    href: "#",
+    href: "/product/123",
     imageSrc:
       "https://tailwindui.com/img/ecommerce-images/home-page-03-favorite-01.jpg",
     imageAlt: "Model wearing women's black cotton crewneck tee.",
@@ -12,7 +12,7 @@ const favorites = [
     id: 2,
     name: "Off-White Basic Tee",
     price: "$32",
-    href: "#",
+    href: "/product/123",
     imageSrc:
       "https://tailwindui.com/img/ecommerce-images/home-page-03-favorite-02.jpg",
     imageAlt: "Model wearing women's off-white cotton crewneck tee.",
@@ -21,7 +21,7 @@ const favorites = [
     id: 3,
     name: "Mountains Artwork Tee",
     price: "$36",
-    href: "#",
+    href: "/product/123",
     imageSrc:
       "https://tailwindui.com/img/ecommerce-images/home-page-03-favorite-03.jpg",
     imageAlt:
