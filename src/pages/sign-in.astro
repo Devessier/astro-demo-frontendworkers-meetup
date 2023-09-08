@@ -16,7 +16,7 @@ if (Astro.request.method === "POST") {
 
   if (formData.success === true) {
     if (formData.data.email.endsWith('@astro.build')) {
-      Astro.cookies.set("user", "lol");
+      Astro.cookies.set("user", JSON.stringify({ email: formData.data.email }));
 
       return Astro.redirect("/");
     }
