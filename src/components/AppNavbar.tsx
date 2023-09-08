@@ -1,12 +1,12 @@
 import { Fragment, useState } from "react";
-import { Dialog, Popover, Tab, Transition } from "@headlessui/react";
+import { Dialog, Menu, Popover, Tab, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
   MagnifyingGlassIcon,
   ShoppingBagIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { clsx } from 'clsx'
+import { clsx } from "clsx";
 
 const navigation = {
   categories: [
@@ -138,7 +138,11 @@ const navigation = {
   ],
 };
 
-export function AppNavbar() {
+interface AppNavabarProps {
+  isSignedIn: boolean;
+}
+
+export function AppNavbar({ isSignedIn }: AppNavabarProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -282,22 +286,56 @@ export function AppNavbar() {
                 </div>
 
                 <div className="space-y-6 border-t border-gray-200 px-4 py-6">
-                  <div className="flow-root">
-                    <a
-                      href="/sign-in"
-                      className="-m-2 block p-2 font-medium text-gray-900"
-                    >
-                      Sign in
-                    </a>
-                  </div>
-                  <div className="flow-root">
-                    <a
-                      href="/sign-up"
-                      className="-m-2 block p-2 font-medium text-gray-900"
-                    >
-                      Create account
-                    </a>
-                  </div>
+                  {isSignedIn === true ? (
+                    <>
+                      <div className="flow-root">
+                        <a
+                          href="/me"
+                          className="-m-2 block p-2 font-medium text-gray-900"
+                        >
+                          Your Profile
+                        </a>
+                      </div>
+                      <div className="flow-root">
+                        <a
+                          href="#"
+                          className="-m-2 block p-2 font-medium text-gray-900"
+                        >
+                          Settings
+                        </a>
+                      </div>
+                      <div className="flow-root">
+                        <form
+                          method="POST"
+                          action="/sign-out"
+                          className="-m-2 block p-2 font-medium text-gray-900"
+                        >
+                          <button className="inline-block text-start w-full">
+                            Sign out
+                          </button>
+                        </form>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flow-root">
+                        <a
+                          href="/sign-in"
+                          className="-m-2 block p-2 font-medium text-gray-900"
+                        >
+                          Sign in
+                        </a>
+                      </div>
+                      <div className="flow-root">
+                        <a
+                          href="/sign-up"
+                          className="-m-2 block p-2 font-medium text-gray-900"
+                        >
+                          Create account
+                        </a>
+                      </div>
+                    </>
+                  )}
                 </div>
               </Dialog.Panel>
             </Transition.Child>
@@ -473,19 +511,92 @@ export function AppNavbar() {
 
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  <a
-                    href="/sign-in"
-                    className="text-sm font-medium text-gray-700 hover:text-gray-800"
-                  >
-                    Sign in
-                  </a>
-                  <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
-                  <a
-                    href="/sign-up"
-                    className="text-sm font-medium text-gray-700 hover:text-gray-800"
-                  >
-                    Create account
-                  </a>
+                  {isSignedIn === true ? (
+                    <Menu as="div" className="relative ml-3">
+                      <div>
+                        <Menu.Button className="relative flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                          <span className="absolute -inset-1.5" />
+                          <span className="sr-only">Open user menu</span>
+                          <img
+                            className="h-8 w-8 rounded-full"
+                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                            alt=""
+                          />
+                        </Menu.Button>
+                      </div>
+                      <Transition
+                        as={Fragment}
+                        enter="transition ease-out duration-200"
+                        enterFrom="transform opacity-0 scale-95"
+                        enterTo="transform opacity-100 scale-100"
+                        leave="transition ease-in duration-75"
+                        leaveFrom="transform opacity-100 scale-100"
+                        leaveTo="transform opacity-0 scale-95"
+                      >
+                        <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                          <Menu.Item>
+                            {({ active }) => (
+                              <a
+                                href="/me"
+                                className={clsx(
+                                  active ? "bg-gray-100" : "",
+                                  "block px-4 py-2 text-sm text-gray-700"
+                                )}
+                              >
+                                Your Profile
+                              </a>
+                            )}
+                          </Menu.Item>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <a
+                                href="#"
+                                className={clsx(
+                                  active ? "bg-gray-100" : "",
+                                  "block px-4 py-2 text-sm text-gray-700"
+                                )}
+                              >
+                                Settings
+                              </a>
+                            )}
+                          </Menu.Item>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <form method="POST" action="/sign-out">
+                                <button
+                                  className={clsx(
+                                    active ? "bg-gray-100" : "",
+                                    "inline-block text-start w-full px-4 py-2 text-sm text-gray-700"
+                                  )}
+                                >
+                                  Sign out
+                                </button>
+                              </form>
+                            )}
+                          </Menu.Item>
+                        </Menu.Items>
+                      </Transition>
+                    </Menu>
+                  ) : (
+                    <>
+                      <a
+                        href="/sign-in"
+                        className="text-sm font-medium text-gray-700 hover:text-gray-800"
+                      >
+                        Sign in
+                      </a>
+                      <span
+                        className="h-6 w-px bg-gray-200"
+                        aria-hidden="true"
+                      />
+                      <a
+                        href="/sign-up"
+                        className="text-sm font-medium text-gray-700 hover:text-gray-800"
+                      >
+                        Create account
+                      </a>
+                    </>
+                  )}
                 </div>
 
                 {/* Search */}

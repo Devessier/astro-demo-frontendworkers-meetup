@@ -8,6 +8,11 @@ interface Props {
 }
 
 const { title } = Astro.props;
+
+const userCookie = Astro.cookies.get('user')
+const user = userCookie?.json()
+const isSignedIn = user !== undefined
+console.log('user', user)
 ---
 
 <!DOCTYPE html>
@@ -24,7 +29,7 @@ const { title } = Astro.props;
 	</head>
 	<body class="h-full">
 		<div class="bg-white">
-			<AppNavbar client:load />
+			<AppNavbar {isSignedIn} client:load />
 			
 			<slot />
 
