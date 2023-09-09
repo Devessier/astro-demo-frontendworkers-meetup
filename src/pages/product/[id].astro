@@ -1,8 +1,153 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import { Product } from '../../components/Product';
+import Layout from "../../layouts/Layout.astro";
+
+import { clsx } from "clsx";
+import { ProductPageReviews } from "../../components/ProductPageReviews";
+import { ProductPageCustomization } from "../../components/ProductPageCustomization";
+import { ProductPagePolicies } from "../../components/ProductPagePolicies";
+
+const product = {
+  id: 1,
+  name: "Basic Tee",
+  price: "$35",
+  href: "#",
+  breadcrumbs: [
+    { id: 1, name: "Women", href: "#" },
+    { id: 2, name: "Clothing", href: "#" },
+  ],
+  images: [
+    {
+      id: 1,
+      imageSrc:
+        "https://tailwindui.com/img/ecommerce-images/product-page-01-featured-product-shot.jpg",
+      imageAlt: "Back of women's Basic Tee in black.",
+      primary: true,
+    },
+    {
+      id: 2,
+      imageSrc:
+        "https://tailwindui.com/img/ecommerce-images/product-page-01-product-shot-01.jpg",
+      imageAlt: "Side profile of women's Basic Tee in black.",
+      primary: false,
+    },
+    {
+      id: 3,
+      imageSrc:
+        "https://tailwindui.com/img/ecommerce-images/product-page-01-product-shot-02.jpg",
+      imageAlt: "Front of women's Basic Tee in black.",
+      primary: false,
+    },
+  ],
+  colors: [
+    { name: "Black", bgColor: "bg-gray-900", selectedColor: "ring-gray-900" },
+    {
+      name: "Heather Grey",
+      bgColor: "bg-gray-400",
+      selectedColor: "ring-gray-400",
+    },
+  ],
+  sizes: [
+    { name: "XXS", inStock: true },
+    { name: "XS", inStock: true },
+    { name: "S", inStock: true },
+    { name: "M", inStock: true },
+    { name: "L", inStock: true },
+    { name: "XL", inStock: false },
+  ],
+  description: `
+    <p>The Basic tee is an honest new take on a classic. The tee uses super soft, pre-shrunk cotton for true comfort and a dependable fit. They are hand cut and sewn locally, with a special dye technique that gives each tee it's own look.</p>
+    <p>Looking to stock your closet? The Basic tee also comes in a 3-pack or 5-pack at a bundle discount.</p>
+  `,
+  details: [
+    "Only the best materials",
+    "Ethically and locally made",
+    "Pre-washed and pre-shrunk",
+    "Machine wash cold with similar colors",
+  ],
+};
+
+const reviews = {
+  average: 3.9,
+  totalCount: 512,
+};
 ---
 
 <Layout title="Product">
-	<Product />
+  <main
+    class="mx-auto mt-8 max-w-2xl px-4 pb-16 sm:px-6 sm:pb-24 lg:max-w-7xl lg:px-8"
+  >
+    <div class="lg:grid lg:auto-rows-min lg:grid-cols-12 lg:gap-x-8">
+      <div class="lg:col-span-5 lg:col-start-8">
+        <div class="flex justify-between">
+          <h1 class="text-xl font-medium text-gray-900">
+            {product.name}
+          </h1>
+          <p class="text-xl font-medium text-gray-900">{product.price}</p>
+        </div>
+        {/* Reviews */}
+        <div class="mt-4">
+          <h2 class="sr-only">Reviews</h2>
+          <ProductPageReviews
+            score={reviews.average}
+            reviewsCount={reviews.totalCount}
+          />
+        </div>
+      </div>
+
+      {/* Image gallery */}
+      <div
+        class="mt-8 lg:col-span-7 lg:col-start-1 lg:row-span-3 lg:row-start-1 lg:mt-0"
+      >
+        <h2 class="sr-only">Images</h2>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-3 lg:gap-8">
+          {
+            product.images.map((image, index) => (
+              <img
+                src={image.imageSrc}
+                alt={image.imageAlt}
+                transition:name={
+                  index === 0 ? `product-image:${product.id}` : undefined
+                }
+                class={clsx(
+                  image.primary
+                    ? "lg:col-span-2 lg:row-span-2"
+                    : "hidden lg:block",
+                  "rounded-lg"
+                )}
+              />
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="mt-8 lg:col-span-5">
+        <ProductPageCustomization
+          colors={product.colors}
+          sizes={product.sizes}
+        />
+
+        {/* Product details */}
+        <div class="mt-10">
+          <h2 class="text-sm font-medium text-gray-900">Description</h2>
+
+          <div class="prose prose-sm mt-4 text-gray-500">
+            <Fragment set:html={product.description} />
+          </div>
+        </div>
+
+        <div class="mt-8 border-t border-gray-200 pt-8">
+          <h2 class="text-sm font-medium text-gray-900">Fabric &amp; Care</h2>
+
+          <div class="prose prose-sm mt-4 text-gray-500">
+            <ul role="list">
+              {product.details.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+        </div>
+
+        <ProductPagePolicies />
+      </div>
+    </div>
+  </main>
 </Layout>

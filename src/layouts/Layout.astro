@@ -25,7 +25,7 @@ const { title } = Astro.props;
 	<body class="h-full">
 		<div class="bg-white">
 			<AppNavbar isSignedIn={Astro.locals.isAuthenticated} client:load />
-			
+
 			<slot />
 
 			<AppFooter />
