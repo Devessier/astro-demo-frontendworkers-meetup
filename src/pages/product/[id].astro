@@ -8,7 +8,7 @@ import { fetchProductData } from '../../services/products'
 
 const product = await fetchProductData({ productId: Number(Astro.params.id) })
 if (product === undefined) {
-  return Astro.redirect('/404', 404)
+  return Astro.redirect('/404')
 }
 ---
 
