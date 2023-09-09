@@ -1,5 +1,53 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { zfd } from "zod-form-data";
+import { z } from "zod";
+import { clsx } from "clsx";
+
+const signUpFormScheme = zfd.formData({
+  username: zfd.text(
+    z
+      .string({ required_error: "Username field must not be empty." })
+      .min(6, { message: "Username must be longer than 6 characters." })
+  ),
+  email: zfd.text(
+    z
+      .string({ required_error: "Email field must not be empty." })
+      .email({ message: "Email field must be a valid email." })
+  ),
+  password: zfd.text(
+    z
+      .string({ required_error: "Password field must not be empty." })
+      .nonempty({ message: "Password field must not be empty." })
+  ),
+});
+const formErrors: Partial<Record<string, string>> = {};
+
+let formPrefilledData: Partial<z.infer<typeof signUpFormScheme>> = {};
+
+if (Astro.request.method === "POST") {
+  const rawFormData = await Astro.request.formData();
+  const formDataAsObject = Object.fromEntries(rawFormData.entries());
+  formPrefilledData = formDataAsObject;
+
+  const formData = signUpFormScheme.safeParse(formDataAsObject);
+
+  if (formData.success === true) {
+    if (formData.data.email.endsWith("@astro.build")) {
+      Astro.cookies.set("user", JSON.stringify({ email: formData.data.email }));
+
+      return Astro.redirect("/");
+    }
+
+    formErrors.email = "Unavailable email.";
+  } else {
+    for (const [field, [firstError]] of Object.entries(
+      formData.error.flatten().fieldErrors
+    )) {
+      formErrors[field] = firstError;
+    }
+  }
+}
 ---
 
 <Layout title="Create account">
@@ -25,16 +73,52 @@ import Layout from "../layouts/Layout.astro";
             class="block text-sm font-medium leading-6 text-gray-900"
             >Email address</label
           >
-          <div class="mt-2">
+          <div class="relative mt-2">
             <input
               id="email"
               name="email"
               type="email"
               autocomplete="email"
               required
-              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              value={formPrefilledData.email}
+              aria-invalid={formErrors.email !== undefined}
+              aria-describedby={formErrors.email !== undefined
+                ? "email-error"
+                : null}
+              class={clsx([
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6",
+                formErrors.email === undefined
+                  ? "ring-gray-300 placeholder:text-gray-400 focus:ring-indigo-600"
+                  : "ring-red-300 placeholder:text-red-300 focus:ring-red-500",
+              ])}
             />
+
+            {
+              formErrors.email !== undefined ? (
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                  <svg
+                    class="h-5 w-5 text-red-500"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+              ) : null
+            }
           </div>
+          {
+            formErrors.email !== undefined ? (
+              <p class="mt-2 text-sm text-red-600" id="email-error">
+                {formErrors.email}
+              </p>
+            ) : null
+          }
         </div>
 
         <div>
@@ -43,16 +127,52 @@ import Layout from "../layouts/Layout.astro";
             class="block text-sm font-medium leading-6 text-gray-900"
             >Username</label
           >
-          <div class="mt-2">
+          <div class="relative mt-2">
             <input
               id="username"
               name="username"
               type="text"
               autocomplete="username"
               required
-              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              value={formPrefilledData.username}
+              aria-invalid={formErrors.username !== undefined}
+              aria-describedby={formErrors.username !== undefined
+                ? "username-error"
+                : null}
+              class={clsx([
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6",
+                formErrors.username === undefined
+                  ? "ring-gray-300 placeholder:text-gray-400 focus:ring-indigo-600"
+                  : "ring-red-300 placeholder:text-red-300 focus:ring-red-500",
+              ])}
             />
+
+            {
+              formErrors.username !== undefined ? (
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                  <svg
+                    class="h-5 w-5 text-red-500"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+              ) : null
+            }
           </div>
+          {
+            formErrors.username !== undefined ? (
+              <p class="mt-2 text-sm text-red-600" id="username-error">
+                {formErrors.username}
+              </p>
+            ) : null
+          }
         </div>
 
         <div>
@@ -61,16 +181,51 @@ import Layout from "../layouts/Layout.astro";
             class="block text-sm font-medium leading-6 text-gray-900"
             >Password</label
           >
-          <div class="mt-2">
+          <div class="relative mt-2">
             <input
               id="password"
               name="password"
               type="password"
               autocomplete="current-password"
               required
-              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              aria-invalid={formErrors.password !== undefined}
+              aria-describedby={formErrors.password !== undefined
+                ? "password-error"
+                : null}
+              class={clsx([
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6",
+                formErrors.password === undefined
+                  ? "ring-gray-300 placeholder:text-gray-400 focus:ring-indigo-600"
+                  : "ring-red-300 placeholder:text-red-300 focus:ring-red-500",
+              ])}
             />
+
+            {
+              formErrors.password !== undefined ? (
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                  <svg
+                    class="h-5 w-5 text-red-500"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+              ) : null
+            }
           </div>
+          {
+            formErrors.password !== undefined ? (
+              <p class="mt-2 text-sm text-red-600" id="password-error">
+                {formErrors.password}
+              </p>
+            ) : null
+          }
         </div>
 
         <div>
@@ -83,11 +238,11 @@ import Layout from "../layouts/Layout.astro";
       </form>
 
       <p class="mt-10 text-center text-sm text-gray-500">
-        Not a member?
+        Already a member?
         <a
-          href="#"
+          href="/sign-in"
           class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-          >Sign up to spend your money</a
+          >Sign in to your account</a
         >
       </p>
     </div>

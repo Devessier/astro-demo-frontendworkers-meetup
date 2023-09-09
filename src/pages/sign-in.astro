@@ -59,6 +59,7 @@ if (Astro.request.method === "POST") {
               name="email"
               type="email"
               autocomplete="email"
+              required
               aria-invalid={formErrors.email !== undefined}
               aria-describedby={formErrors.email !== undefined ? "email-error" : null}
               class={clsx([
@@ -136,7 +137,7 @@ if (Astro.request.method === "POST") {
       <p class="mt-10 text-center text-sm text-gray-500">
         Not a member?
         <a
-          href="#"
+          href="/sign-up"
           class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
           >Sign up to spend your money</a
         >
