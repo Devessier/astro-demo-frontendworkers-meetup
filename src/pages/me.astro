@@ -1,0 +1,11 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+if (Astro.locals.isAuthenticated === false) {
+    return Astro.redirect('/sign-in')
+}
+---
+
+<Layout title="My Account">
+	
+</Layout>

@@ -8,11 +8,6 @@ interface Props {
 }
 
 const { title } = Astro.props;
-
-const userCookie = Astro.cookies.get('user')
-const user = userCookie?.json()
-const isSignedIn = user !== undefined
-console.log('user', user)
 ---
 
 <!DOCTYPE html>
@@ -29,7 +24,7 @@ console.log('user', user)
 	</head>
 	<body class="h-full">
 		<div class="bg-white">
-			<AppNavbar {isSignedIn} client:load />
+			<AppNavbar isSignedIn={Astro.locals.isAuthenticated} client:load />
 			
 			<slot />
 
