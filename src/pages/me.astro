@@ -7,5 +7,9 @@ if (Astro.locals.isAuthenticated === false) {
 ---
 
 <Layout title="My Account">
-	
+	<div class="relative mx-auto max-w-[37.5rem] pt-20 text-center pb-24">
+        <h2 class="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">Account</h2>
+
+        <p class="mt-4 text-base leading-7 text-slate-600">Welcome back, {Astro.locals.user!.email}!</p>
+    </div>
 </Layout>
