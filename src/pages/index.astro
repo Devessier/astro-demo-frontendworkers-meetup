@@ -1,36 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { fetchFavoriteProducts } from "../services/products";
 
-const favorites = [
-  {
-    id: 1,
-    name: "Black Basic Tee",
-    price: "$32",
-    href: "/product/123",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/home-page-03-favorite-01.jpg",
-    imageAlt: "Model wearing women's black cotton crewneck tee.",
-  },
-  {
-    id: 2,
-    name: "Off-White Basic Tee",
-    price: "$32",
-    href: "/product/123",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/home-page-03-favorite-02.jpg",
-    imageAlt: "Model wearing women's off-white cotton crewneck tee.",
-  },
-  {
-    id: 3,
-    name: "Mountains Artwork Tee",
-    price: "$36",
-    href: "/product/123",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/home-page-03-favorite-03.jpg",
-    imageAlt:
-      "Model wearing women's burgundy red crewneck artwork tee with small white triangle overlapping larger black triangle.",
-  },
-];
+const favorites = await fetchFavoriteProducts();
 ---
 
 <Layout title="Welcome to Astro.">
@@ -174,7 +146,7 @@ const favorites = [
                   />
                 </div>
                 <h3 class="mt-4 text-base font-semibold text-gray-900">
-                  <a href={favorite.href}>
+                  <a href={`/product/${favorite.id}`}>
                     <span class="absolute inset-0" />
                     {favorite.name}
                   </a>
