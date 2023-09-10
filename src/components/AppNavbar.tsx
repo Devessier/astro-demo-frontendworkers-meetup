@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Dialog, Menu, Popover, Tab, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -7,6 +7,9 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { clsx } from "clsx";
+import type { CartCookieContent } from "../types";
+import { useActor } from "@xstate/react";
+import { cartService } from "../shared/cart";
 
 const navigation = {
   categories: [
@@ -140,10 +143,32 @@ const navigation = {
 
 interface AppNavabarProps {
   isSignedIn: boolean;
+  cart: CartCookieContent | undefined;
 }
 
-export function AppNavbar({ isSignedIn }: AppNavabarProps) {
+export function AppNavbar({ isSignedIn, cart: initialCart }: AppNavabarProps) {
   const [open, setOpen] = useState(false);
+  const [state, send] = useActor(cartService);
+
+  console.log({ "state.context.cart": state.context.cart, initialCart });
+  const cart = state.context.cart ?? initialCart ?? [];
+
+  const productCount = cart.reduce(
+    (count, product) => count + product.quantity,
+    0
+  );
+
+  // Synchronize state machine put in a shared stateful module with data coming from the server.
+  useEffect(() => {
+    if (initialCart === undefined) {
+      return;
+    }
+
+    send({
+      type: "Update cart",
+      cart: initialCart,
+    });
+  }, [initialCart]);
 
   return (
     <>
@@ -307,7 +332,7 @@ export function AppNavbar({ isSignedIn }: AppNavabarProps) {
                       <div className="flow-root">
                         <form
                           method="POST"
-                          action="/sign-out"
+                          action="/api/sign-out"
                           className="-m-2 block p-2 font-medium text-gray-900"
                         >
                           <button className="inline-block text-start w-full">
@@ -562,7 +587,7 @@ export function AppNavbar({ isSignedIn }: AppNavabarProps) {
                           </Menu.Item>
                           <Menu.Item>
                             {({ active }) => (
-                              <form method="POST" action="/sign-out">
+                              <form method="POST" action="/api/sign-out">
                                 <button
                                   className={clsx(
                                     active ? "bg-gray-100" : "",
@@ -612,16 +637,89 @@ export function AppNavbar({ isSignedIn }: AppNavabarProps) {
 
                 {/* Cart */}
                 <div className="ml-4 flow-root lg:ml-6">
-                  <a href="#" className="group -m-2 flex items-center p-2">
-                    <ShoppingBagIcon
-                      className="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
-                      aria-hidden="true"
-                    />
-                    <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
-                      0
-                    </span>
-                    <span className="sr-only">items in cart, view bag</span>
-                  </a>
+                  <Popover className="relative">
+                    <Popover.Button className="group -m-2 flex items-center p-2">
+                      <ShoppingBagIcon
+                        className="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+                        aria-hidden="true"
+                      />
+                      <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
+                        {productCount}
+                      </span>
+                      <span className="sr-only">items in cart, view bag</span>
+                    </Popover.Button>
+
+                    <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-200"
+                      enterFrom="opacity-0 translate-y-1"
+                      enterTo="opacity-100 translate-y-0"
+                      leave="transition ease-in duration-150"
+                      leaveFrom="opacity-100 translate-y-0"
+                      leaveTo="opacity-0 translate-y-1"
+                    >
+                      <Popover.Panel className="absolute right-0 z-10 mt-5 flex w-screen max-w-max -mr-2">
+                        <div className="w-screen max-w-md flex-auto overflow-hidden rounded-3xl bg-white text-sm leading-6 shadow-lg ring-1 ring-gray-900/5">
+                          <ul className="p-4">
+                            {cart.length === 0 ? (
+                              <p className="text-center text-gray-500">
+                                No product added to cart yet.
+                              </p>
+                            ) : (
+                              cart.map((product) => (
+                                <li
+                                  key={product.id}
+                                  className="flex space-x-6 py-6"
+                                >
+                                  <img
+                                    src={product.imageSrc}
+                                    alt={product.imageAlt}
+                                    className="h-24 w-24 flex-none rounded-md bg-gray-100 object-contain object-center"
+                                  />
+                                  <div className="flex-auto">
+                                    <div className="space-y-1 sm:flex sm:items-start sm:justify-between sm:space-x-6">
+                                      <div className="flex-auto space-y-1 text-sm font-medium">
+                                        <h3 className="text-gray-900">
+                                          <a href={`/product/${product.id}`}>
+                                            {product.name}
+                                          </a>
+                                        </h3>
+                                        <p className="text-gray-900">
+                                          {product.price}
+                                        </p>
+                                        <p className="hidden text-gray-500 sm:block">
+                                          Gray
+                                        </p>
+                                        <p className="hidden text-gray-500 sm:block">
+                                          S
+                                        </p>
+                                      </div>
+                                      <div className="flex flex-none space-x-4">
+                                        <button
+                                          type="button"
+                                          className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                                        >
+                                          Edit
+                                        </button>
+                                        <div className="flex border-l border-gray-300 pl-4">
+                                          <button
+                                            type="button"
+                                            className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                                          >
+                                            Remove
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </li>
+                              ))
+                            )}
+                          </ul>
+                        </div>
+                      </Popover.Panel>
+                    </Transition>
+                  </Popover>
                 </div>
               </div>
             </div>

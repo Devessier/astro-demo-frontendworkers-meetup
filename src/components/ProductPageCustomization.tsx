@@ -1,18 +1,53 @@
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import { clsx } from "clsx";
+import { QueryClientProvider, useMutation } from "@tanstack/react-query";
+import { queryClient } from "../shared/queryClient";
+import { AddProductResponseBody, type AddProductRequestBody } from "../types";
+import { cartService } from "../shared/cart";
 
 interface ProductPageCustomizationProps {
-    colors: { name: string, bgColor: string, selectedColor: string }[]
-    sizes: { name: string, inStock: boolean }[]
+  productId: number;
+  colors: { name: string; bgColor: string; selectedColor: string }[];
+  sizes: { name: string; inStock: boolean }[];
 }
 
-export function ProductPageCustomization({ colors, sizes }: ProductPageCustomizationProps) {
+function ProductPageCustomizationBase({
+  productId,
+  colors,
+  sizes,
+}: ProductPageCustomizationProps) {
   const [selectedColor, setSelectedColor] = useState(colors[0]);
   const [selectedSize, setSelectedSize] = useState(sizes[2]);
 
+  const checkoutProductMutation = useMutation({
+    mutationFn: async (request: AddProductRequestBody) => {
+      const res = await fetch("/api/cart", {
+        method: "POST",
+        body: JSON.stringify(request),
+      });
+
+      return AddProductResponseBody.parse(await res.json());
+    },
+    onSuccess: ({ cart }) => {
+      console.log("cart", cart);
+
+      cartService.send({
+        type: "Update cart",
+        cart,
+      });
+    },
+    onError: console.error,
+  });
+
   return (
-    <form>
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+
+        checkoutProductMutation.mutate({ productId });
+      }}
+    >
       {/* Color picker */}
       <div>
         <h2 className="text-sm font-medium text-gray-900">Color</h2>
@@ -106,5 +141,13 @@ export function ProductPageCustomization({ colors, sizes }: ProductPageCustomiza
         Add to cart
       </button>
     </form>
+  );
+}
+
+export function ProductPageCustomization(props: ProductPageCustomizationProps) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ProductPageCustomizationBase {...props} />
+    </QueryClientProvider>
   );
 }

@@ -63,6 +63,8 @@ if (product === undefined) {
 
       <div class="mt-8 lg:col-span-5">
         <ProductPageCustomization
+          client:load
+          productId={product.id}
           colors={product.colors}
           sizes={product.sizes}
         />

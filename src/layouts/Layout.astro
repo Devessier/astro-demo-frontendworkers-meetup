@@ -2,12 +2,15 @@
 import { ViewTransitions } from 'astro:transitions';
 import { AppNavbar } from '../components/AppNavbar';
 import { AppFooter } from '../components/AppFooter';
+import { getCartCookie } from '../pages/api/cart'
 
 interface Props {
 	title: string;
 }
 
 const { title } = Astro.props;
+
+const cart = getCartCookie(Astro.cookies)
 ---
 
 <!DOCTYPE html>
@@ -24,7 +27,7 @@ const { title } = Astro.props;
 	</head>
 	<body class="h-full">
 		<div class="bg-white">
-			<AppNavbar isSignedIn={Astro.locals.isAuthenticated} client:load />
+			<AppNavbar isSignedIn={Astro.locals.isAuthenticated} {cart} client:load />
 
 			<slot />
 
