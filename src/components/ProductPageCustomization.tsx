@@ -33,7 +33,7 @@ function ProductPageCustomizationBase({
       console.log("cart", cart);
 
       cartService.send({
-        type: "Update cart",
+        type: "Product added to cart",
         cart,
       });
     },

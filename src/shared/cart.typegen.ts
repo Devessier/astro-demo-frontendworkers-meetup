@@ -4,7 +4,8 @@
   export interface Typegen0 {
         '@@xstate/typegen': true;
         internalEvents: {
-          "xstate.init": { type: "xstate.init" };
+          "xstate.after(2000)#Cart machine.Animating cart": { type: "xstate.after(2000)#Cart machine.Animating cart" };
+"xstate.init": { type: "xstate.init" };
         };
         invokeSrcNameMap: {
           
@@ -16,7 +17,7 @@
           services: never;
         };
         eventsCausingActions: {
-          "Assign cart to context": "Update cart";
+          "Assign cart to context": "Product added to cart" | "Update cart";
         };
         eventsCausingDelays: {
           
@@ -27,7 +28,7 @@
         eventsCausingServices: {
           
         };
-        matchesStates: undefined;
+        matchesStates: "Animating cart" | "Idle";
         tags: never;
       }
   

@@ -640,10 +640,16 @@ export function AppNavbar({ isSignedIn, cart: initialCart }: AppNavabarProps) {
                   <Popover className="relative">
                     <Popover.Button className="group -m-2 flex items-center p-2">
                       <ShoppingBagIcon
-                        className="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+                        className={clsx(
+                          "h-6 w-6 flex-shrink-0 transition-colors",
+                          state.matches("Animating cart") ? 'text-indigo-700' : 'text-gray-400 group-hover:text-gray-500'
+                        )}
                         aria-hidden="true"
                       />
-                      <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
+                      <span className={clsx(
+                        "ml-2 text-sm font-medium",
+                        state.matches("Animating cart") ? 'text-indigo-700' : 'text-gray-700 group-hover:text-gray-800'
+                      )}>
                         {productCount}
                       </span>
                       <span className="sr-only">items in cart, view bag</span>
@@ -685,14 +691,14 @@ export function AppNavbar({ isSignedIn, cart: initialCart }: AppNavabarProps) {
                                           </a>
                                         </h3>
                                         <p className="text-gray-900">
-                                          {product.price}
+                                          {product.price} x {product.quantity}
                                         </p>
-                                        <p className="hidden text-gray-500 sm:block">
+                                        {/* <p className="hidden text-gray-500 sm:block">
                                           Gray
                                         </p>
                                         <p className="hidden text-gray-500 sm:block">
                                           S
-                                        </p>
+                                        </p> */}
                                       </div>
                                       <div className="flex flex-none space-x-4">
                                         <button
