@@ -2,6 +2,7 @@
 import { ViewTransitions } from 'astro:transitions';
 import { AppNavbar } from '../components/AppNavbar';
 import { AppFooter } from '../components/AppFooter';
+import { TheChatbot } from '../components/TheChatbot';
 import { getCartCookie } from '../pages/api/cart'
 
 interface Props {
@@ -32,6 +33,8 @@ const cart = getCartCookie(Astro.cookies)
 			<slot />
 
 			<AppFooter />
+
+			<TheChatbot client:idle transition:persist />
 		</div>
 	</body>
 </html>
