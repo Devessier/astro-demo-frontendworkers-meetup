@@ -1,7 +1,7 @@
 import products from "./products.db.json";
 
 export async function fetchFavoriteProducts() {
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  // await new Promise((resolve) => setTimeout(resolve, 500));
 
   return products.map((product) => {
     const primaryImage = product.images.find((image) => image.primary === true);
@@ -20,7 +20,7 @@ export async function fetchFavoriteProducts() {
 }
 
 export async function fetchProductData({ productId }: { productId: number }) {
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  // await new Promise((resolve) => setTimeout(resolve, 500));
 
   const product = products.find((product) => product.id === productId);
   if (product === undefined) {
