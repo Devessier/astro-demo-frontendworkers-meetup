@@ -1,6 +1,8 @@
 import { assign, createMachine, interpret } from "xstate";
 import type { CartCookieContent } from "../types";
 
+console.log('>>> Evaluating shared/cart.ts')
+
 /** @xstate-layout N4IgpgJg5mDOIC5QGECGAnALgAgLaoGMALASwDswBiAVQAcJVMxsCNMBtABgF1FRaA9rBKYSAsnxAAPRAEYArAGYAdABYAnACYAHNtX7OAdkP75AGhABPRAFpZi+cvkA2bfM7r1z1dsXbDAL4BFmhYeISkFMoAkhAANlQACugCEACuBDioEBCQ2JgCLGxcvEgggsKi4pIyCJqGssp6zvKymjqcipqyhhbWCM6NhpycqorjGn7OHkEhbOHE5GDKAIJkJPiiZFBFWJRSsJiMy6gAZkzoABSaI5wAlJShOPiLUWsbjOQ7rFglkhUiMQSMq1bTqZR+FzTWSyMGGRSqcxWRDtZzKbzyQwuBEmBTqbRBYIgMipOCSJ4LSJgf5CQHVEG2bqaZRtfGyThg9ScdycZx9RmOZzeTwNZyKbzc+SzEAUl5UmLxallAFVYGgWp2bwszRsjmebkjPnIhAw8HyfwwwzebSS6WyiJLVbrTZfXaYGmVIE1FHuZSaPzdbRCjSGdRtfkmhpqXS8kyh-zOTSqQkBIA */
 const cartMachine = createMachine(
   {
