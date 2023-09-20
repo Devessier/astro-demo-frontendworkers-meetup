@@ -4,6 +4,10 @@ import { zfd } from "zod-form-data";
 import { z } from "zod";
 import { clsx } from "clsx";
 
+if (Astro.locals.isAuthenticated === true) {
+  return Astro.redirect('/')
+}
+
 const signUpFormScheme = zfd.formData({
   username: zfd.text(
     z

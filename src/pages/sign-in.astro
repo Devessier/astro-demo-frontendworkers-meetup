@@ -4,6 +4,10 @@ import { zfd } from "zod-form-data";
 import { z } from 'zod'
 import { clsx } from 'clsx'
 
+if (Astro.locals.isAuthenticated === true) {
+  return Astro.redirect('/')
+}
+
 const signInFormScheme = zfd.formData({
   email: zfd.text(z.string().email({ message: 'Email field must be a valid email.' })),
   password: zfd.text(z.string({ required_error: "Password field must not be empty." }).nonempty({ message: 'Password field must not be empty.' })),
@@ -46,7 +50,7 @@ if (Astro.request.method === "POST") {
     </div>
 
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <form class="space-y-6" action="#" method="POST">
+      <form class="space-y-6" method="POST">
         <div>
           <label
             for="email"
