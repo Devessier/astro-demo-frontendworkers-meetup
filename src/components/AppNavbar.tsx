@@ -647,7 +647,7 @@ export function AppNavbar({ isSignedIn, cart: initialCart }: AppNavabarProps) {
                         aria-hidden="true"
                       />
                       <span className={clsx(
-                        "ml-2 text-sm font-medium",
+                        "ml-2 text-sm font-medium transition-colors",
                         state.matches("Animating cart") ? 'text-indigo-700' : 'text-gray-700 group-hover:text-gray-800'
                       )}>
                         {productCount}
