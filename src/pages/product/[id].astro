@@ -2,7 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import { clsx } from "clsx";
 import { ProductPageReviews } from "../../components/ProductPageReviews";
-import { ProductPageCustomization } from "../../components/ProductPageCustomization";
+import { ProductPageAddToCart } from "../../components/ProductPageAddToCart";
 import { ProductPagePolicies } from "../../components/ProductPagePolicies";
 import { fetchProductData } from '../../services/products'
 
@@ -62,7 +62,7 @@ if (product === undefined) {
       </div>
 
       <div class="mt-8 lg:col-span-5">
-        <ProductPageCustomization
+        <ProductPageAddToCart
           client:load
           productId={product.id}
           colors={product.colors}

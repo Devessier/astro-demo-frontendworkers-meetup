@@ -6,17 +6,17 @@ import { queryClient } from "../shared/queryClient";
 import { AddProductResponseBody, type AddProductRequestBody } from "../types";
 import { cartService } from "../shared/cart";
 
-interface ProductPageCustomizationProps {
+interface ProductPageAddToCartProps {
   productId: number;
   colors: { name: string; bgColor: string; selectedColor: string }[];
   sizes: { name: string; inStock: boolean }[];
 }
 
-function ProductPageCustomizationBase({
+function ProductPageAddToCartBase({
   productId,
   colors,
   sizes,
-}: ProductPageCustomizationProps) {
+}: ProductPageAddToCartProps) {
   const [selectedColor, setSelectedColor] = useState(colors[0]);
   const [selectedSize, setSelectedSize] = useState(sizes[2]);
 
@@ -144,10 +144,10 @@ function ProductPageCustomizationBase({
   );
 }
 
-export function ProductPageCustomization(props: ProductPageCustomizationProps) {
+export function ProductPageAddToCart(props: ProductPageAddToCartProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <ProductPageCustomizationBase {...props} />
+      <ProductPageAddToCartBase {...props} />
     </QueryClientProvider>
   );
 }
